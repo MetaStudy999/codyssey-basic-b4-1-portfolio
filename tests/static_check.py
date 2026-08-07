@@ -95,6 +95,14 @@ check(".map(" in js, "Array.map is used")
 check(".forEach(" in js, "Array.forEach is used")
 check("const STATE =" in js, "central STATE object is present")
 
+# External GitHub API values are rendered with innerHTML, so ensure the values
+# that become markup/attributes are constrained before interpolation.
+check("const getSafeProjectUrl" in js and "new URL(" in js, "project URL is parsed before rendering")
+check('parsed.protocol !== "https:"' in js, "project URL requires HTTPS")
+check('parsed.hostname !== "github.com"' in js, "project URL is restricted to github.com")
+check("Number.isFinite(Number(stars))" in js, "project star count is coerced to a finite number")
+check("escapeHtml(safeUrl)" in js and "escapeHtml(safeStars)" in js, "project URL and star values are escaped before innerHTML")
+
 # Mentioning a future technology in portfolio prose is not the same as using it.
 # Detect actual framework/library loading or module imports instead of naive words.
 prohibited = ("react", "vue", "jquery", "bootstrap", "tailwind")
