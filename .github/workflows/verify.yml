@@ -32,6 +32,9 @@ jobs:
             exit "$STATUS"
           fi
 
+      - name: JavaScript syntax check
+        run: node --check js/app.js
+
       - name: Verify static site serves over HTTP
         run: |
           python3 -m http.server 8000 > /tmp/b4-1-http.log 2>&1 &
