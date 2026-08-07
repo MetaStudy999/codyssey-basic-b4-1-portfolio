@@ -115,10 +115,31 @@ const smoothScrollTo = (event) => {
   closeMenu();
 };
 
+const escapeHtml = (value) => String(value)
+  .replaceAll("&", "&amp;")
+  .replaceAll("<", "&lt;")
+  .replaceAll(">", "&gt;")
+  .replaceAll('"', "&quot;")
+  .replaceAll("'", "&#039;");
+
+const getSafeProjectUrl = (value) => {
+  try {
+    const parsed = new URL(String(value));
+    if (parsed.protocol !== "https:" || parsed.hostname !== "github.com") {
+      return "https://github.com/MetaStudy999";
+    }
+    return parsed.href;
+  } catch (error) {
+    return "https://github.com/MetaStudy999";
+  }
+};
+
 const projectCardTemplate = (repo) => {
   const { name, description, html_url: url, language, stargazers_count: stars } = repo;
   const safeDescription = description || "설명이 등록되지 않은 저장소입니다.";
   const safeLanguage = language || "N/A";
+  const safeStars = Number.isFinite(Number(stars)) ? Number(stars) : 0;
+  const safeUrl = getSafeProjectUrl(url);
 
   return `
     <article class="project-card">
@@ -126,19 +147,12 @@ const projectCardTemplate = (repo) => {
       <p>${escapeHtml(safeDescription)}</p>
       <div class="project-meta" aria-label="프로젝트 메타 정보">
         <span>${escapeHtml(safeLanguage)}</span>
-        <span>★ ${stars}</span>
+        <span>★ ${escapeHtml(safeStars)}</span>
       </div>
-      <a class="project-link" href="${encodeURI(url)}" target="_blank" rel="noopener noreferrer">GitHub에서 보기</a>
+      <a class="project-link" href="${escapeHtml(safeUrl)}" target="_blank" rel="noopener noreferrer">GitHub에서 보기</a>
     </article>
   `;
 };
-
-const escapeHtml = (value) => String(value)
-  .replaceAll("&", "&amp;")
-  .replaceAll("<", "&lt;")
-  .replaceAll(">", "&gt;")
-  .replaceAll('"', "&quot;")
-  .replaceAll("'", "&#039;");
 
 const renderProjects = () => {
   const { status, items, error } = STATE.projects;
