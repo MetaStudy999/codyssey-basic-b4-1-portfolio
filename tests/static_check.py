@@ -95,10 +95,18 @@ check(".map(" in js, "Array.map is used")
 check(".forEach(" in js, "Array.forEach is used")
 check("const STATE =" in js, "central STATE object is present")
 
+# Mentioning a future technology in portfolio prose is not the same as using it.
+# Detect actual framework/library loading or module imports instead of naive words.
 prohibited = ("react", "vue", "jquery", "bootstrap", "tailwind")
-implementation_text = f"{html}\n{css}\n{js}".lower()
+external_asset_refs = re.findall(r'(?:src|href)="([^"]+)"', html, re.IGNORECASE)
 for name in prohibited:
-    check(name not in implementation_text, f"prohibited framework/library is absent: {name}")
+    check(
+        not any(name in ref.lower() for ref in external_asset_refs),
+        f"prohibited framework/library is not loaded as an HTML asset: {name}",
+    )
+
+check(not re.search(r"^\s*import\s", js, re.MULTILINE), "JavaScript has no module import dependency")
+check("require(" not in js, "JavaScript has no CommonJS dependency")
 
 print(f"PASS checks: {len(passes)}")
 for item in passes:
