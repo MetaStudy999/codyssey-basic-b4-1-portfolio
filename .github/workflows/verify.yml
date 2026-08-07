@@ -16,10 +16,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Static acceptance checks
-        run: python3 tests/static_check.py
+        shell: bash
+        run: |
+          set +e
+          python3 tests/static_check.py > /tmp/static-check.txt 2>&1
+          STATUS=$?
+          cat /tmp/static-check.txt
+          if [ "$STATUS" -ne 0 ]; then
+            while IFS= read -r line; do
+              echo "::error::$line"
+            done < /tmp/static-check.txt
+            exit "$STATUS"
+          fi
 
       - name: Verify static site serves over HTTP
         run: |
