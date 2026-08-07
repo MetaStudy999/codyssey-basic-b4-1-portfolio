@@ -1,0 +1,31 @@
+name: Verify B4-1
+
+on:
+  push:
+    branches:
+      - mission/b4-1
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Static acceptance checks
+        run: python3 tests/static_check.py
+
+      - name: Verify static site serves over HTTP
+        run: |
+          python3 -m http.server 8000 > /tmp/b4-1-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID' EXIT
+          sleep 1
+          curl --fail --silent --show-error http://127.0.0.1:8000/ > /tmp/b4-1-index.html
+          grep -q 'id="projects"' /tmp/b4-1-index.html
