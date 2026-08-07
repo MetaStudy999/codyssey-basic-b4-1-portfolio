@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 420" role="img" aria-labelledby="title desc">
+  <title id="title">MetaStudy999 개발 학습 프로필</title>
+  <desc id="desc">코드 블록과 연결 노드를 단순한 선으로 표현한 추상 일러스트</desc>
+  <rect width="420" height="420" rx="48" fill="#172033"/>
+  <g fill="none" stroke="#8ca8ff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M120 148 70 210l50 62"/>
+    <path d="m300 148 50 62-50 62"/>
+    <path d="m238 118-56 184"/>
+  </g>
+  <g fill="#eef3ff">
+    <circle cx="86" cy="82" r="14"/>
+    <circle cx="334" cy="94" r="14"/>
+    <circle cx="320" cy="330" r="14"/>
+    <circle cx="95" cy="335" r="14"/>
+  </g>
+  <g stroke="#eef3ff" stroke-width="4" opacity="0.65">
+    <path d="M97 91 148 140"/>
+    <path d="m322 105-52 40"/>
+    <path d="m311 320-52-44"/>
+    <path d="m107 326 47-48"/>
+  </g>
+  <text x="210" y="372" fill="#eef3ff" font-family="system-ui, sans-serif" font-size="22" text-anchor="middle">BUILD · TEST · EXPLAIN</text>
+</svg>
