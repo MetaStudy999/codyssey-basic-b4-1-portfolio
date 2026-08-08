@@ -72,15 +72,29 @@ B4-1 **「나를 소개하는 웹페이지 처음부터 만들기」**의 평가
 
 ---
 
+## 평가 답변 준비
+
+15개 평가문항에 대한 **질문별 모범 답변, 코드 흐름, 한 문장 요약, 평가 직전 암기표**는 [`EVALUATION-ANSWERS.md`](EVALUATION-ANSWERS.md)에 정리했습니다.
+
+답변은 다음 순서로 말하는 것을 기본 구조로 합니다.
+
+```text
+무엇을 구현했는가
+→ 왜 이 설계를 선택했는가
+→ 어떤 함수/상태/DOM 흐름으로 동작하는가
+→ 실제로 어디까지 검증했는가
+```
+
 ## 증빙 진입점
 
 평가 시 다음 순서로 확인하면 가장 빠릅니다.
 
 1. **전체 평가 매핑:** 이 문서 `docs/EVALUATION-MAPPING.md`
-2. **실제 PNG 증빙 인덱스:** [`docs/evidence/README.md`](evidence/README.md)
-3. **Runtime 상세 판정:** [`docs/RUNTIME-EVIDENCE.md`](RUNTIME-EVIDENCE.md)
-4. **평가 답변 학습:** [`docs/LEARNING.md`](LEARNING.md)
-5. **실제 배포 사이트:** https://metastudy999.github.io/codyssey-basic-b4-1-portfolio/
+2. **15문항 모범 답변:** [`docs/EVALUATION-ANSWERS.md`](EVALUATION-ANSWERS.md)
+3. **실제 PNG 증빙 인덱스:** [`docs/evidence/README.md`](evidence/README.md)
+4. **Runtime 상세 판정:** [`docs/RUNTIME-EVIDENCE.md`](RUNTIME-EVIDENCE.md)
+5. **개념·코드 학습:** [`docs/LEARNING.md`](LEARNING.md)
+6. **실제 배포 사이트:** https://metastudy999.github.io/codyssey-basic-b4-1-portfolio/
 
 ## 최소 추가 검증
 
@@ -109,6 +123,7 @@ B4-1 **「나를 소개하는 웹페이지 처음부터 만들기」**의 평가
 - [x] GitHub Pages 배포 및 설정 증빙
 - [x] 평가 설명 문서 `LEARNING.md`
 - [x] 평가 ↔ 코드 ↔ 증빙 매핑 문서
+- [x] 평가 15문항 모범 답변 문서
 - [ ] GitHub API Error + Retry 실제 런타임 증빙
 - [ ] GitHub API Empty 실제 런타임 증빙
 
