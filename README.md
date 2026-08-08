@@ -21,7 +21,7 @@
 - CSS3: custom properties, Flexbox, Grid, media query
 - JavaScript ES6+: DOM API, event listener, destructuring, template literal, `filter` / `map` / `forEach`, `fetch`, `async/await`, `try/catch`, `localStorage`
 - GitHub REST API
-- GitHub Pages (배포 Gate에서 활성화)
+- GitHub Pages (`main / (root)` 배포)
 
 > React, Vue, jQuery, Bootstrap, Tailwind CSS 등 외부 프레임워크/라이브러리를 사용하지 않습니다.
 
@@ -40,7 +40,10 @@
 │   └── static_check.py
 ├── docs/
 │   ├── LEARNING.md
-│   └── RUNTIME-EVIDENCE.md
+│   ├── RUNTIME-EVIDENCE.md
+│   └── evidence/
+│       ├── README.md
+│       └── *.png
 ├── MISSION-WORK-PACKET.md
 ├── b4-1-mission.pdf
 ├── b4-1-mission.md
@@ -93,43 +96,63 @@ https://api.github.com/users/MetaStudy999/repos
 
 ## GitHub Pages
 
-예정 URL:
+**배포 URL:**
 
-```text
 https://metastudy999.github.io/codyssey-basic-b4-1-portfolio/
-```
 
-현재 Workcell에서 GitHub Pages Repository Settings 변경 API가 제공되지 않으므로, 최종 배포 Gate에서 `Settings → Pages → Deploy from a branch → main / (root)` 활성화 후 실제 외부 URL을 검증해야 합니다. 검증 전에는 배포를 PASS로 표시하지 않습니다.
+현재 GitHub Pages 상태를 확인한 결과 다음과 같이 배포되어 있습니다.
 
-## 브라우저 Runtime 체크
+| 항목 | 상태 |
+|---|---|
+| Pages build | `built` |
+| Source | `main / (root)` |
+| Public | `true` |
+| HTTPS enforced | `true` |
 
-1. 375px: hamburger open/close
-2. 768px 전후: mobile navigation → desktop navigation 전환
-3. 1024px 이상: desktop spacing / 2-column layout
-4. Dark toggle → reload 후 theme 유지
-5. 60px scroll → header style 변경
-6. 300px scroll → top button 표시 및 동작
-7. Contact 빈 값 / 잘못된 email / 정상값 validation
-8. Projects loading → success
-9. API 실패 → error + Retry, empty data → empty UI
-10. Console error 없음
+배포 설정 화면 증빙은 [`docs/evidence/README.md`](docs/evidence/README.md)의 **Developer Verification & Deployment** 항목에서 확인할 수 있습니다.
 
-실제 결과는 [`docs/RUNTIME-EVIDENCE.md`](docs/RUNTIME-EVIDENCE.md)에 기록합니다.
+## 브라우저 Runtime 검증
+
+현재 실제 브라우저/증빙 기준으로 다음 항목을 확인했습니다.
+
+| 항목 | 상태 |
+|---|---|
+| 375px 모바일 레이아웃 및 hamburger | `PASS` |
+| 768px / 1024px 반응형 레이아웃 | `PASS` |
+| Dark mode + reload 후 설정 유지 | `PASS` |
+| Scroll-top 표시 및 상단 이동 | `PASS` |
+| Contact 빈 값 / 잘못된 email / 정상 제출 | `PASS` |
+| GitHub API 실제 repository card 렌더링 | `PASS` |
+| Console 오류/경고/Issues 없음 | `PASS` |
+| GitHub Pages 배포 | `PASS` |
+| Smooth Scroll 보간 동작 독립 계측 | `PARTIAL` |
+| Header 60px 전환 시점 독립 계측 | `PARTIAL` |
+| IntersectionObserver 0.25 진입 시점 독립 계측 | `PARTIAL` |
+| API Error + Retry 실제 실패 재현 | `NOT-RUNTIME-VERIFIED` |
+| API Empty 실제 빈 응답 재현 | `NOT-RUNTIME-VERIFIED` |
+
+상세 판정은 [`docs/RUNTIME-EVIDENCE.md`](docs/RUNTIME-EVIDENCE.md)에 기록합니다.
 
 **실제 PNG 증빙 인덱스:** [`docs/evidence/README.md`](docs/evidence/README.md)
 
 ## 제출 Evidence
 
-Mission 필수 screenshot은 실제 브라우저 검증 후 아래 경로로 추가합니다.
+미션의 핵심 실행 화면을 실제 PNG 증빙으로 저장했습니다.
 
 | Evidence | 경로 | 현재 상태 |
 |---|---|---|
-| Desktop | `docs/evidence/desktop.png` | `NEEDS-RUNTIME` |
-| Mobile | `docs/evidence/mobile.png` | `NEEDS-RUNTIME` |
-| Dark mode | `docs/evidence/dark.png` | `NEEDS-RUNTIME` |
-| Projects/API | `docs/evidence/projects.png` | `NEEDS-RUNTIME` |
+| Desktop | [`docs/evidence/desktop.png`](docs/evidence/desktop.png) | `PASS` |
+| Mobile | [`docs/evidence/mobile.png`](docs/evidence/mobile.png) | `PASS` |
+| Dark mode | [`docs/evidence/dark.png`](docs/evidence/dark.png) | `PASS` |
+| Projects/API success | [`docs/evidence/projects.png`](docs/evidence/projects.png) | `PASS` |
+| Contact validation | [`docs/evidence/README.md`](docs/evidence/README.md#4-contact-form-validation) | `PASS` |
+| Responsive | [`docs/evidence/README.md`](docs/evidence/README.md#2-responsive-layout) | `PASS` |
+| Console | [`docs/evidence/console-no-errors.png`](docs/evidence/console-no-errors.png) | `PASS` |
+| GitHub Pages | [`docs/evidence/github-pages-settings.png`](docs/evidence/github-pages-settings.png) | `PASS` |
 
-스크린샷이 실제로 생성되기 전에는 임의 이미지를 증빙으로 대체하지 않습니다.
+전체 15개 PNG 증빙은 [`docs/evidence/README.md`](docs/evidence/README.md)에서 목적별로 분류해 확인할 수 있습니다.
+
+> API Error/Retry와 Empty 상태는 **코드 구현은 확인되었지만 실제 실패/빈 응답 런타임 재현 증빙은 아직 없습니다.** 구현 상태와 런타임 증빙 상태를 구분해 기록합니다.
 
 ## 학습 문서
 
