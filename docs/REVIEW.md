@@ -1,5 +1,7 @@
 # B4-1 Review Record
 
+> 이 문서는 초기 코드 리뷰 기록을 보존하면서, PR 병합 이후 확보된 Runtime/Evidence 결과를 현재 `main` 기준으로 추가 동기화한 기록입니다. 실제 재현하지 않은 런타임 시나리오는 PASS로 과장하지 않습니다.
+
 ## Review Scope
 
 검토 범위는 `AGENTS.md`에 따라 다음으로 제한했다.
@@ -13,16 +15,18 @@
 
 MINOR, 보너스 기능, 대규모 리팩터링은 B4-1 완료 Gate를 지연시키지 않는다.
 
-## 1. Self Review
+---
 
-### Result
+## 1. Historical Self Review
+
+초기 PR 리뷰 시점의 결과는 다음과 같다.
 
 - Mission PDF 필수 소스 요구: 구현됨
 - 금지 프레임워크 사용: 없음
 - `var`, inline `onclick`, inline `style`: 없음
 - secret/API token 하드코딩: 없음
 - 브라우저/Pages 미실행 항목의 허위 PASS: 없음
-- 실제 Chrome/외부 배포 검증: `NEEDS-RUNTIME`으로 유지
+- 당시 실제 Chrome/외부 배포 검증: `NEEDS-RUNTIME`
 
 ### Automated revalidation
 
@@ -43,6 +47,8 @@ GitHub Actions run:
 - `python3 tests/static_check.py`
 - `node --check js/app.js`
 - `python3 -m http.server 8000` + `curl` entry-page check
+
+---
 
 ## 2. Independent Review — GitHub Copilot
 
@@ -91,9 +97,11 @@ db3b92b6b74dc0fc58d62ea213257885fbbfe02f
 
 ### Resolution
 
-Copilot inline comment에 수정 내용을 답변했고 review thread를 resolved 처리했다. 수정 후 최신 PR-head CI run `31213465789`가 성공했다.
+Copilot inline comment에 수정 내용을 답변했고 review thread를 resolved 처리했다. 수정 후 PR-head CI run `31213465789`가 성공했다.
 
-## 3. Review Gate Verdict
+---
+
+## 3. Code Review Gate Verdict
 
 | Category | Remaining |
 |---|---:|
@@ -106,14 +114,85 @@ Copilot inline comment에 수정 내용을 답변했고 review thread를 resolve
 
 **G4 REVIEW:** `PASS`
 
-단, 다음 항목은 코드 리뷰가 아니라 실제 환경 acceptance 대상이므로 별도로 남긴다.
+이 판정은 코드/정적 검증 및 독립 리뷰에 대한 것이다. Runtime acceptance는 별도 항목으로 관리한다.
 
-- responsive layout 375 / 768 / 1024+
-- hamburger / smooth scroll / scroll-top / header scroll behavior
-- dark-mode reload persistence
-- form interaction UX
-- live GitHub API rendering
-- GitHub Pages external URL
-- required screenshots
+---
 
-위 항목의 상태는 `NEEDS-RUNTIME`이며 `docs/RUNTIME-EVIDENCE.md`에서 실제 결과만 기록한다.
+## 4. Post-Merge Runtime / Evidence Follow-up
+
+PR #1은 `main`에 병합되었으며, 이후 실제 브라우저 증빙과 GitHub Pages 상태를 추가 확인했다.
+
+- PR #1: `merged`
+- Merge commit: `af590599e80c7a7b87acd0520b2de8093e466e96`
+- GitHub Pages: `built`
+- Pages source: `main / (root)`
+- Public: `true`
+- HTTPS enforced: `true`
+- 배포 URL: https://metastudy999.github.io/codyssey-basic-b4-1-portfolio/
+
+### Runtime verification status
+
+| 항목 | 현재 상태 | 근거 |
+|---|---|---|
+| Desktop ≥1024px | `PASS` | `docs/evidence/desktop.png`, `responsive-1024.png` |
+| Mobile 375px | `PASS` | `docs/evidence/mobile.png`, `mobile-menu.png` |
+| 768px / 1024px responsive | `PASS` | `responsive-768.png`, `responsive-1024.png` |
+| Dark mode | `PASS` | `dark.png` |
+| Theme reload persistence | `PASS` | 실제 브라우저 관찰 + `localStorage` 구현 |
+| Hamburger Menu | `PASS` | `mobile-menu.png` |
+| Scroll Top | `PASS` | `mobile-scroll-top.png` + 실제 동작 확인 |
+| Contact blank | `PASS` | `contact-empty.png` |
+| Invalid email | `PASS` | `contact-invalid-email.png` |
+| Valid form | `PASS` | `contact-success.png` |
+| GitHub API Success | `PASS` | `projects.png`, `mobile-projects.png` |
+| Console | `PASS` | `console-no-errors.png` |
+| GitHub Pages | `PASS` | Pages 설정 PNG + 외부 URL 상태 |
+| Smooth Scroll 보간 자체 | `PARTIAL` | 목적지 도달 및 구현 확인, 보간 과정은 별도 계측하지 않음 |
+| Header 60px 정확한 전환 시점 | `PARTIAL` | 코드 기준값 확인, 픽셀 단위 런타임 계측 없음 |
+| IntersectionObserver 0.25 정확한 진입 시점 | `PARTIAL` | 구현 확인, 정밀 런타임 계측 없음 |
+| API Error + Retry | `NOT-RUNTIME-VERIFIED` | 코드 구현 확인, 실제 실패 상황 미재현 |
+| API Empty | `NOT-RUNTIME-VERIFIED` | 코드 구현 확인, 실제 빈 응답 미재현 |
+
+상세 Runtime 판정은 [`RUNTIME-EVIDENCE.md`](RUNTIME-EVIDENCE.md), 실제 PNG 인덱스는 [`evidence/README.md`](evidence/README.md)에서 확인한다.
+
+---
+
+## 5. Evaluation Follow-up
+
+평가 후보 문항 기준 현재 판정은 다음과 같다.
+
+| 상태 | 문항 수 |
+|---|---:|
+| `PASS` | 13 |
+| `PARTIAL` | 2 |
+| `FAIL` | 0 |
+
+세부 추적은 [`EVALUATION-MAPPING.md`](EVALUATION-MAPPING.md), 답변 준비는 [`EVALUATION-ANSWERS.md`](EVALUATION-ANSWERS.md)에 정리되어 있다.
+
+두 `PARTIAL`은 구현 결함으로 확인된 것이 아니라 다음 Runtime 경계 때문이다.
+
+1. 인터랙션 항목 중 일부 스크롤 동작의 정밀 계측 미실시
+2. GitHub API Error + Retry / Empty 실제 런타임 재현 미실시
+
+---
+
+## 6. Current Review Conclusion
+
+| Category | Current |
+|---|---:|
+| BLOCKER | 0 |
+| MAJOR | 0 |
+| Source-level required omission | 0 known |
+| Automated test failure | 0 |
+| Secret exposure | 0 known |
+| False PASS claim | 0 known |
+| Evaluation | `13 PASS / 2 PARTIAL / 0 FAIL` |
+| Runtime verdict | `PARTIAL-RUNTIME-VERIFIED` |
+
+### Remaining runtime-only gaps
+
+- GitHub API Error + Retry 실제 실패 시나리오
+- GitHub API Empty 실제 빈 응답 시나리오
+- Smooth Scroll / Header threshold / IntersectionObserver의 정밀 계측은 낮은 우선순위로 문서 경계를 유지
+
+따라서 **G4 REVIEW는 계속 `PASS`**이며, 현재 남은 내용은 코드 리뷰 결함이 아니라 Runtime 증빙의 경계로 관리한다.
