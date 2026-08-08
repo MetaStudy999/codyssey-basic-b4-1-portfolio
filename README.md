@@ -39,6 +39,7 @@
 ├── tests/
 │   └── static_check.py
 ├── docs/
+│   ├── EVALUATION-MAPPING.md
 │   ├── LEARNING.md
 │   ├── RUNTIME-EVIDENCE.md
 │   └── evidence/
@@ -134,6 +135,20 @@ https://metastudy999.github.io/codyssey-basic-b4-1-portfolio/
 상세 판정은 [`docs/RUNTIME-EVIDENCE.md`](docs/RUNTIME-EVIDENCE.md)에 기록합니다.
 
 **실제 PNG 증빙 인덱스:** [`docs/evidence/README.md`](docs/evidence/README.md)
+
+## 평가 ↔ 코드 ↔ 증빙 매핑
+
+평가문항을 구현 파일, 실제 PNG 증빙, 학습 설명 문서와 한 번에 대조할 수 있도록 [`docs/EVALUATION-MAPPING.md`](docs/EVALUATION-MAPPING.md)에 통합했습니다.
+
+현재 평가 후보 문항 기준 판정은 다음과 같습니다.
+
+| 상태 | 문항 수 |
+|---|---:|
+| `PASS` | 13 |
+| `PARTIAL` | 2 |
+| `FAIL` | 0 |
+
+두 `PARTIAL`은 구현 결함이 아니라 **GitHub API Error + Retry / Empty의 실제 런타임 재현 공백**과 일부 스크롤 동작의 정밀 계측 경계를 반영합니다. 최종 제출 확인은 Evaluation Mapping 문서를 우선 진입점으로 사용합니다.
 
 ## 제출 Evidence
 
