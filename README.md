@@ -116,6 +116,8 @@ https://metastudy999.github.io/codyssey-basic-b4-1-portfolio/
 
 실제 결과는 [`docs/RUNTIME-EVIDENCE.md`](docs/RUNTIME-EVIDENCE.md)에 기록합니다.
 
+**실제 PNG 증빙 인덱스:** [`docs/evidence/README.md`](docs/evidence/README.md)
+
 ## 제출 Evidence
 
 Mission 필수 screenshot은 실제 브라우저 검증 후 아래 경로로 추가합니다.
