@@ -39,6 +39,7 @@
 ├── tests/
 │   └── static_check.py
 ├── docs/
+│   ├── EVALUATION-ANSWERS.md
 │   ├── EVALUATION-MAPPING.md
 │   ├── LEARNING.md
 │   ├── RUNTIME-EVIDENCE.md
@@ -136,9 +137,11 @@ https://metastudy999.github.io/codyssey-basic-b4-1-portfolio/
 
 **실제 PNG 증빙 인덱스:** [`docs/evidence/README.md`](docs/evidence/README.md)
 
-## 평가 ↔ 코드 ↔ 증빙 매핑
+## 평가 준비
 
-평가문항을 구현 파일, 실제 PNG 증빙, 학습 설명 문서와 한 번에 대조할 수 있도록 [`docs/EVALUATION-MAPPING.md`](docs/EVALUATION-MAPPING.md)에 통합했습니다.
+평가문항을 구현 파일, 실제 PNG 증빙, 학습 설명 문서와 대조한 추적표는 [`docs/EVALUATION-MAPPING.md`](docs/EVALUATION-MAPPING.md)에 정리했습니다.
+
+평가 시 바로 말할 수 있는 **15개 문항별 모범 답변**은 [`docs/EVALUATION-ANSWERS.md`](docs/EVALUATION-ANSWERS.md)에 정리했습니다.
 
 현재 평가 후보 문항 기준 판정은 다음과 같습니다.
 
@@ -148,7 +151,14 @@ https://metastudy999.github.io/codyssey-basic-b4-1-portfolio/
 | `PARTIAL` | 2 |
 | `FAIL` | 0 |
 
-두 `PARTIAL`은 구현 결함이 아니라 **GitHub API Error + Retry / Empty의 실제 런타임 재현 공백**과 일부 스크롤 동작의 정밀 계측 경계를 반영합니다. 최종 제출 확인은 Evaluation Mapping 문서를 우선 진입점으로 사용합니다.
+두 `PARTIAL`은 구현 결함이 아니라 **GitHub API Error + Retry / Empty의 실제 런타임 재현 공백**과 일부 스크롤 동작의 정밀 계측 경계를 반영합니다.
+
+평가 직전에는 다음 순서로 확인하면 됩니다.
+
+1. [`docs/EVALUATION-ANSWERS.md`](docs/EVALUATION-ANSWERS.md) — 질문별 모범 답변과 1분 암기표
+2. [`docs/EVALUATION-MAPPING.md`](docs/EVALUATION-MAPPING.md) — 평가문항 ↔ 코드 ↔ 증빙 추적
+3. [`docs/evidence/README.md`](docs/evidence/README.md) — 실제 PNG 증빙
+4. [`docs/RUNTIME-EVIDENCE.md`](docs/RUNTIME-EVIDENCE.md) — Runtime PASS/PARTIAL 경계
 
 ## 제출 Evidence
 
@@ -171,7 +181,9 @@ https://metastudy999.github.io/codyssey-basic-b4-1-portfolio/
 
 ## 학습 문서
 
-구현 코드 기준 설명은 [`docs/LEARNING.md`](docs/LEARNING.md)에 정리되어 있습니다.
+구현 코드 기준 개념 설명은 [`docs/LEARNING.md`](docs/LEARNING.md)에 정리되어 있습니다.
+
+평가 답변은 [`docs/EVALUATION-ANSWERS.md`](docs/EVALUATION-ANSWERS.md)에서 질문별로 바로 연습할 수 있습니다.
 
 - Semantic HTML / accessibility
 - Flexbox vs Grid
