@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Codyssey B4-1 Vanilla JavaScript portfolio reference site">
+  <meta name="github-username" content="MetaStudy999">
+  <title>Codyssey B4-1 Portfolio</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/script.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">본문으로 바로가기</a>
+
+  <header class="site-header" id="site-header">
+    <nav class="nav container" aria-label="주요 메뉴">
+      <a class="brand" href="#hero" aria-label="포트폴리오 홈">CODYSSEY</a>
+
+      <button class="menu-toggle" id="menu-toggle" type="button" aria-controls="nav-menu" aria-expanded="false">
+        <span class="sr-only">메뉴 열기</span>
+        <span aria-hidden="true">☰</span>
+      </button>
+
+      <ul class="nav-menu" id="nav-menu">
+        <li><a href="#about">About</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false">
+        <span class="sr-only">다크 모드 전환</span>
+        <span id="theme-icon" aria-hidden="true">🌙</span>
+      </button>
+    </nav>
+  </header>
+
+  <main id="main-content">
+    <section class="hero section" id="hero" aria-labelledby="hero-title">
+      <div class="container hero-content reveal">
+        <p class="eyebrow">AI/SW Developer Portfolio</p>
+        <h1 id="hero-title">문제를 이해하고, 작동하는 결과로 연결합니다.</h1>
+        <p class="hero-copy">HTML, CSS, JavaScript의 기본 원리부터 API 연동까지 직접 구현하며 성장하는 개발자 포트폴리오입니다.</p>
+        <div class="hero-actions">
+          <a class="button" href="#projects">프로젝트 보기</a>
+          <a class="button button-secondary" href="#contact">연락하기</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="about" aria-labelledby="about-title">
+      <div class="container two-column reveal">
+        <div class="profile-wrap">
+          <img class="profile-image" src="images/profile-placeholder.svg" alt="개발자 프로필을 대신하는 추상적인 사람 실루엣 이미지">
+        </div>
+        <div>
+          <p class="eyebrow">About</p>
+          <h2 id="about-title">기본기를 코드로 확인합니다.</h2>
+          <p>브라우저가 HTML 구조를 읽고 CSS로 배치한 뒤 JavaScript 이벤트에 따라 DOM을 변경하는 전체 흐름을 직접 구현합니다.</p>
+          <p>작은 기능도 로딩, 오류, 빈 상태와 접근성을 함께 고려하는 것을 목표로 합니다.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-muted" id="skills" aria-labelledby="skills-title">
+      <div class="container reveal">
+        <p class="eyebrow">Skills</p>
+        <h2 id="skills-title">기술 스택</h2>
+        <div class="skills-grid" role="list">
+          <article class="skill-card" role="listitem">
+            <h3>HTML</h3>
+            <p>시맨틱 구조, 접근 가능한 폼과 문서 구조를 설계합니다.</p>
+          </article>
+          <article class="skill-card" role="listitem">
+            <h3>CSS</h3>
+            <p>Flexbox, Grid, CSS 변수와 mobile-first 반응형 레이아웃을 구현합니다.</p>
+          </article>
+          <article class="skill-card" role="listitem">
+            <h3>JavaScript</h3>
+            <p>DOM, 이벤트, localStorage, fetch/async-await 기반 비동기 UI를 구현합니다.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="projects" aria-labelledby="projects-title">
+      <div class="container reveal">
+        <div class="section-heading-row">
+          <div>
+            <p class="eyebrow">Projects</p>
+            <h2 id="projects-title">GitHub Projects</h2>
+          </div>
+          <button class="button button-secondary" id="reload-projects" type="button">다시 불러오기</button>
+        </div>
+
+        <div class="status-card" id="projects-status" role="status" aria-live="polite">프로젝트를 불러오는 중입니다.</div>
+        <div class="projects-grid" id="projects-grid" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section class="section section-muted" id="contact" aria-labelledby="contact-title">
+      <div class="container contact-layout reveal">
+        <div>
+          <p class="eyebrow">Contact</p>
+          <h2 id="contact-title">메시지를 남겨 주세요.</h2>
+          <p>이 폼은 B4-1의 클라이언트 측 유효성 검증을 보여 주는 Reference입니다. 실제 서버 전송은 하지 않습니다.</p>
+        </div>
+
+        <form class="contact-form" id="contact-form" novalidate>
+          <div class="field">
+            <label for="name">이름</label>
+            <input id="name" name="name" type="text" autocomplete="name" required minlength="2">
+            <p class="field-error" id="name-error"></p>
+          </div>
+
+          <div class="field">
+            <label for="email">이메일</label>
+            <input id="email" name="email" type="email" autocomplete="email" required>
+            <p class="field-error" id="email-error"></p>
+          </div>
+
+          <div class="field">
+            <label for="message">메시지</label>
+            <textarea id="message" name="message" rows="5" required minlength="10"></textarea>
+            <p class="field-error" id="message-error"></p>
+          </div>
+
+          <button class="button" type="submit">검증하기</button>
+          <p class="form-result" id="form-result" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-content">
+      <p>© <span id="year"></span> Codyssey B4-1 Reference Portfolio</p>
+      <a href="https://github.com/MetaStudy999" target="_blank" rel="noreferrer">GitHub</a>
+    </div>
+  </footer>
+
+  <button class="scroll-top" id="scroll-top" type="button" aria-label="페이지 맨 위로 이동">↑</button>
+</body>
+</html>
