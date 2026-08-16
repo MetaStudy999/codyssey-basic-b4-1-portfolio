@@ -16,23 +16,52 @@ const githubUsername = document.querySelector('meta[name="github-username"]')?.c
 const STORAGE_KEY = 'b4-1-theme';
 const NAV_SCROLL_THRESHOLD = 60;
 const TOP_BUTTON_THRESHOLD = 300;
+const OBSERVER_THRESHOLD = 0.2;
 
-const setMenuState = (open) => {
-  navMenu.classList.toggle('active', open);
-  menuToggle.setAttribute('aria-expanded', String(open));
+// One explicit state object makes the mission's event → state → render flow traceable.
+const STATE = {
+  menuOpen: false,
+  theme: 'light',
+  projects: {
+    status: 'idle',
+    items: [],
+    error: '',
+  },
+  form: {
+    valid: false,
+    errors: {},
+  },
 };
 
-const applyTheme = (theme) => {
-  document.documentElement.dataset.theme = theme;
-  const isDark = theme === 'dark';
+const renderMenu = () => {
+  navMenu.classList.toggle('active', STATE.menuOpen);
+  menuToggle.setAttribute('aria-expanded', String(STATE.menuOpen));
+};
+
+const setMenuState = (open) => {
+  STATE.menuOpen = open;
+  renderMenu();
+};
+
+const renderTheme = () => {
+  document.documentElement.dataset.theme = STATE.theme;
+  const isDark = STATE.theme === 'dark';
   themeToggle.setAttribute('aria-pressed', String(isDark));
   themeIcon.textContent = isDark ? '☀️' : '🌙';
+};
+
+const setTheme = (theme, persist = false) => {
+  STATE.theme = theme;
+  renderTheme();
+  if (persist) {
+    localStorage.setItem(STORAGE_KEY, theme);
+  }
 };
 
 const loadTheme = () => {
   const savedTheme = localStorage.getItem(STORAGE_KEY);
   const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  applyTheme(savedTheme || (systemDark ? 'dark' : 'light'));
+  setTheme(savedTheme || (systemDark ? 'dark' : 'light'));
 };
 
 const showProjectStatus = (message) => {
@@ -69,29 +98,57 @@ const createProjectCard = (repository) => {
   return article;
 };
 
-const renderProjects = (repositories) => {
+const renderProjects = () => {
   projectsGrid.innerHTML = '';
+  const { status, items, error } = STATE.projects;
 
-  if (repositories.length === 0) {
-    showProjectStatus('공개 저장소가 없습니다.');
+  if (status === 'loading') {
+    showProjectStatus('프로젝트를 불러오는 중입니다.');
+    reloadProjectsButton.textContent = '불러오는 중...';
+    reloadProjectsButton.disabled = true;
     return;
   }
 
-  hideProjectStatus();
-  repositories.slice(0, 8).forEach((repository) => {
-    projectsGrid.append(createProjectCard(repository));
-  });
+  reloadProjectsButton.disabled = false;
+  reloadProjectsButton.textContent = status === 'error' ? '다시 시도' : '다시 불러오기';
+
+  if (status === 'error') {
+    showProjectStatus(error || '프로젝트를 불러올 수 없습니다.');
+    return;
+  }
+
+  if (status === 'empty') {
+    showProjectStatus('표시할 프로젝트가 없습니다.');
+    return;
+  }
+
+  if (status === 'success') {
+    hideProjectStatus();
+    // map transforms GitHub data into card DOM nodes; forEach attaches them.
+    const cards = items.slice(0, 8).map((repository) => createProjectCard(repository));
+    cards.forEach((card) => projectsGrid.append(card));
+    return;
+  }
+
+  showProjectStatus('프로젝트를 불러올 준비가 되었습니다.');
+};
+
+const setProjectsState = (nextState) => {
+  STATE.projects = { ...STATE.projects, ...nextState };
+  renderProjects();
 };
 
 const loadProjects = async () => {
   if (!githubUsername) {
-    showProjectStatus('GitHub 사용자 이름이 설정되지 않았습니다.');
+    setProjectsState({
+      status: 'error',
+      items: [],
+      error: 'GitHub 사용자 이름이 설정되지 않았습니다.',
+    });
     return;
   }
 
-  showProjectStatus('프로젝트를 불러오는 중입니다.');
-  projectsGrid.innerHTML = '';
-  reloadProjectsButton.disabled = true;
+  setProjectsState({ status: 'loading', items: [], error: '' });
 
   try {
     const response = await fetch(`https://api.github.com/users/${encodeURIComponent(githubUsername)}/repos?sort=updated&per_page=30`);
@@ -101,12 +158,18 @@ const loadProjects = async () => {
 
     const repositories = await response.json();
     const publicRepositories = repositories.filter((repository) => !repository.fork);
-    renderProjects(publicRepositories);
+    setProjectsState({
+      status: publicRepositories.length === 0 ? 'empty' : 'success',
+      items: publicRepositories,
+      error: '',
+    });
   } catch (error) {
     console.error(error);
-    showProjectStatus('프로젝트를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.');
-  } finally {
-    reloadProjectsButton.disabled = false;
+    setProjectsState({
+      status: 'error',
+      items: [],
+      error: '프로젝트를 불러올 수 없습니다. 다시 시도해 주세요.',
+    });
   }
 };
 
@@ -122,21 +185,26 @@ const validateField = (field) => {
     message = `최소 ${field.minLength}자 이상 입력해 주세요.`;
   }
 
+  STATE.form.errors[field.id] = message;
   field.classList.toggle('invalid', Boolean(message));
   field.setAttribute('aria-invalid', String(Boolean(message)));
   errorElement.textContent = message;
   return message === '';
 };
 
+const renderFormResult = () => {
+  formResult.textContent = STATE.form.valid
+    ? '입력 검증을 통과했습니다. 이 Reference 폼은 서버로 전송하지 않습니다.'
+    : '입력 내용을 확인해 주세요.';
+};
+
 menuToggle.addEventListener('click', () => {
-  const isOpen = menuToggle.getAttribute('aria-expanded') === 'true';
-  setMenuState(!isOpen);
+  setMenuState(!STATE.menuOpen);
 });
 
 themeToggle.addEventListener('click', () => {
-  const nextTheme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
-  applyTheme(nextTheme);
-  localStorage.setItem(STORAGE_KEY, nextTheme);
+  const nextTheme = STATE.theme === 'dark' ? 'light' : 'dark';
+  setTheme(nextTheme, true);
 });
 
 navLinks.forEach((link) => {
@@ -168,6 +236,7 @@ contactForm.addEventListener('input', (event) => {
   const field = event.target;
   if (field.matches('input, textarea')) {
     validateField(field);
+    STATE.form.valid = false;
     formResult.textContent = '';
   }
 });
@@ -183,13 +252,13 @@ contactForm.addEventListener('submit', (event) => {
     }
   });
 
-  if (!valid) {
-    formResult.textContent = '입력 내용을 확인해 주세요.';
-    return;
-  }
+  STATE.form.valid = valid;
+  renderFormResult();
 
-  formResult.textContent = '입력 검증을 통과했습니다. 이 Reference 폼은 서버로 전송하지 않습니다.';
-  contactForm.reset();
+  if (valid) {
+    contactForm.reset();
+    STATE.form.errors = {};
+  }
 });
 
 const observer = new IntersectionObserver(
@@ -201,11 +270,13 @@ const observer = new IntersectionObserver(
       }
     });
   },
-  { threshold: 0.12 }
+  { threshold: OBSERVER_THRESHOLD }
 );
 
 document.querySelectorAll('.reveal').forEach((element) => observer.observe(element));
 
 year.textContent = new Date().getFullYear();
+renderMenu();
 loadTheme();
+renderProjects();
 loadProjects();
