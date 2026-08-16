@@ -1,57 +1,105 @@
 # B4-1 R01 — Evaluation Q&A Reference
 
-## 1. 왜 semantic tag를 사용하는가?
+## 1. HTML, CSS, JavaScript를 왜 분리했는가?
 
-`header`, `nav`, `main`, `section`, `article`, `footer`는 화면 모양뿐 아니라 각 영역의 의미를 브라우저, 검색엔진, 보조기술에 전달합니다. `div`만 사용한 구조보다 문서 관계를 이해하기 쉽고 접근성/유지보수에도 유리합니다.
+HTML은 문서 구조와 의미, CSS는 표현과 반응형 레이아웃, JavaScript는 이벤트·상태·DOM 갱신을 담당합니다. 책임을 분리하면 수정 범위가 명확하고 재사용·디버깅이 쉬워집니다.
 
-## 2. Flexbox와 Grid는 어떻게 구분해 사용했는가?
+## 2. 왜 semantic tag를 사용하는가?
 
-Flexbox는 한 축의 정렬에 강해 Navigation의 로고/메뉴/버튼 배치에 사용했습니다. Grid는 행과 열을 함께 다루기 쉬워 Projects/Skills 카드처럼 반복되는 2차원 레이아웃에 사용했습니다. Projects는 `repeat(auto-fit, minmax(...))`로 화면 폭에 따라 열 수가 자동 조정됩니다.
+`header`, `nav`, `main`, `section`, `article`, `footer`는 요소의 역할을 브라우저·검색엔진·보조기술에 전달합니다. 단순 `div`보다 문서 구조를 읽고 유지하기 쉽습니다.
 
-## 3. mobile-first란?
+## 3. CSS 변수를 왜 사용하는가?
 
-기본 CSS를 작은 화면 기준으로 작성하고 `min-width: 768px`, `min-width: 1024px`에서 더 넓은 화면용 규칙을 추가하는 방식입니다. 작은 화면을 나중에 억지로 축소하는 것보다 핵심 콘텐츠 우선순위를 분명히 하기 쉽습니다.
+색상·간격·shadow 같은 design token을 한 곳에서 관리할 수 있습니다. 다크 모드도 동일한 component CSS를 다시 쓰고 변수 값만 바꿀 수 있어 중복을 줄입니다.
 
-## 4. DOM 선택과 이벤트 연결 흐름은?
+## 4. `onclick` 대신 `addEventListener`를 쓴 이유는?
 
-`querySelector/querySelectorAll`로 요소를 찾고 `addEventListener`로 click/submit/scroll/input 이벤트를 연결합니다. 이벤트가 발생하면 local state나 class/attribute/text를 바꾸고 브라우저가 변경된 DOM/CSS를 다시 화면에 반영합니다.
+인라인 `onclick`은 HTML 구조와 JavaScript 동작을 섞습니다. `addEventListener`는 JS에 동작을 모으고 동일 element에 여러 listener를 붙일 수 있어 관심사 분리와 유지보수에 유리합니다.
 
-## 5. 왜 HTML onclick을 사용하지 않았는가?
+## 5. 이벤트 → 상태 변경 → 화면 업데이트를 theme으로 설명하면?
 
-마크업 구조와 동작 코드를 분리하면 HTML 가독성과 JavaScript 유지보수가 좋아집니다. 같은 요소에 여러 이벤트를 연결하거나 기능을 재사용하기도 쉽습니다.
+Theme button click → `STATE.theme`을 light/dark로 변경 → `renderTheme()`이 `data-theme`과 aria/icon을 갱신 → 선택값을 localStorage에 저장합니다. 새로고침 시 저장값을 읽어 다시 STATE와 화면을 맞춥니다.
 
-## 6. 다크 모드가 새로고침 후 유지되는 원리는?
+## 6. API 흐름은 어떻게 되는가?
 
-사용자가 toggle하면 `data-theme`을 바꾸고 선택값을 `localStorage`에 저장합니다. 페이지 시작 시 저장된 값을 읽어 같은 theme을 다시 적용합니다. CSS는 `[data-theme="dark"]` 변수만 바꿔 전체 컴포넌트가 같은 theme 값을 사용하게 합니다.
+`loadProjects()`가 먼저 projects state를 `loading`으로 바꾸고 렌더합니다. `fetch`를 `await`한 뒤 성공하면 JSON을 받고 fork를 `filter()`합니다. 결과가 있으면 `success`, 없으면 `empty` state입니다. HTTP/네트워크 실패는 `catch`에서 `error` state로 바뀌며 UI는 오류 메시지와 `다시 시도` 버튼을 보여 줍니다.
 
-## 7. GitHub API 비동기 흐름은?
+## 7. `async/await`와 `try/catch`를 왜 함께 쓰는가?
 
-`fetch()`가 Promise를 반환하고 `await`로 HTTP 응답과 JSON 변환을 기다립니다. 성공하면 repository를 필터링해 카드로 렌더링하고, 시작 전에는 loading, 결과가 0개면 empty, HTTP/network 실패는 error 상태를 보여 줍니다. `try/catch/finally`로 성공/실패와 버튼 상태를 일관되게 관리합니다.
+비동기 코드를 순차 코드처럼 읽을 수 있고, fetch/JSON 처리 중 발생한 오류를 한 `catch`에서 UI error state로 전환할 수 있습니다. HTTP 4xx/5xx는 fetch 자체가 reject하지 않으므로 `response.ok`도 직접 확인합니다.
 
-## 8. 왜 loading/error/empty 상태가 필요한가?
+## 8. `filter`, `map`, `forEach`는 각각 어디에 쓰는가?
 
-네트워크 요청은 즉시 끝나지 않고 실패하거나 결과가 없을 수 있습니다. 아무것도 보여 주지 않으면 사용자는 멈춘 것인지 빈 결과인지 알 수 없습니다. 상태를 명시하면 현재 상황과 다음 행동을 이해할 수 있습니다.
+- `filter`: fork repository 제외
+- `map`: repository 데이터를 project card DOM node로 변환
+- `forEach`: 만든 card를 DOM에 붙이거나 NodeList에 listener/observer 적용
 
-## 9. 사용자 이벤트 → 상태 → DOM 업데이트는 어떻게 연결되는가?
+즉 데이터 선택 → 변환 → 반영 단계로 구분됩니다.
 
-예를 들어 dark mode 버튼 click → 현재 theme 확인 → nextTheme 결정 → `data-theme`/localStorage 변경 → CSS 변수 재계산 → 화면 변화 순서입니다. React의 state→render 흐름을 배우기 전 Vanilla JS에서 같은 원리를 직접 확인하는 예입니다.
+## 9. Flexbox와 Grid를 각각 왜 선택했는가?
 
-## 10. 햄버거 메뉴는 어떻게 동작하는가?
+Navigation은 로고·메뉴·버튼을 한 축에 정렬하는 1차원 문제라 Flexbox가 적합합니다. Projects는 화면 폭에 따라 여러 열과 행을 자동 구성해야 하므로 `repeat(auto-fit, minmax(...))` Grid가 적합합니다.
 
-모바일에서는 `.nav-menu`가 기본 숨김이고 버튼 click 시 `classList.toggle('active')`와 `aria-expanded`를 함께 변경합니다. CSS가 `.active` 상태를 보고 메뉴를 표시합니다. 링크를 선택하면 메뉴를 닫습니다.
+## 10. 왜 `STATE` 객체를 따로 만들었는가?
 
-## 11. 폼 검증은 어떻게 구현했는가?
+여러 UI 상태를 흩어진 변수로 관리하면 어떤 이벤트가 무엇을 바꾸는지 추적하기 어렵습니다. `STATE.theme`, `STATE.projects`, `STATE.form`, `STATE.menuOpen`처럼 도메인별 상태를 한 위치에서 보면 Event → State → Render 흐름과 현재 값의 관계가 명확합니다.
 
-HTML의 `required`, `type=email`, `minlength`를 기본 규칙으로 사용하고 JavaScript에서 `ValidityState`를 읽어 필드별 오류 문구, `invalid` class, `aria-invalid`를 갱신합니다. submit에서는 `preventDefault()`로 서버 전송을 막고 모든 필드가 유효할 때 성공 안내를 표시합니다.
+## 11. 단순 변수로 처리하면 안 되는가?
 
-## 12. 스크롤 이벤트가 너무 많으면 어떤 문제가 있고 어떻게 개선할 수 있는가?
+작은 기능 하나는 단순 변수로도 가능합니다. 다만 이 미션은 React의 상태-렌더링 개념 전 단계이므로 관련 상태를 명시적으로 묶어 흐름을 학습하는 것이 목적에 더 맞습니다.
 
-scroll은 짧은 시간에 매우 자주 발생하므로 무거운 계산을 매번 하면 성능이 나빠질 수 있습니다. Reference의 scroll handler는 class 두 개만 바꾸도록 작게 유지합니다. 더 복잡한 기능이라면 throttle/requestAnimationFrame을 사용할 수 있고 요소 진입 감지는 `IntersectionObserver`로 scroll polling을 피할 수 있습니다.
+## 12. 왜 Mobile First인가?
 
-## 13. GitHub API에 Access Token을 프론트엔드에 넣지 않는 이유는?
+작은 화면에서 필수 정보와 단순한 레이아웃부터 정의하고, 넓어질수록 기능과 배치를 확장합니다. 기본 CSS가 모바일 기준이므로 작은 화면에서 desktop 규칙을 대량으로 덮어쓰는 일을 줄일 수 있습니다.
 
-브라우저가 받는 JavaScript는 사용자가 모두 볼 수 있습니다. 따라서 token을 넣으면 Secret이 공개됩니다. B4-1 Reference는 공개 repository API만 사용하고, 인증이 필요한 API라면 backend/proxy에서 Secret을 보관해야 합니다.
+## 13. 768px과 1024px에서는 무엇이 달라지는가?
 
-## 14. 접근성을 위해 어떤 요소를 넣었는가?
+768px부터 hamburger가 숨고 desktop형 nav menu와 2-column layout이 활성화됩니다. 1024px에서는 container 여백과 hero typography를 더 넓은 화면에 맞게 조정합니다.
 
-skip link, nav label, button `aria-expanded/pressed`, 의미 있는 image alt, label-for/id, `aria-live`, keyboard focus-visible, reduced-motion 대응을 포함했습니다. 접근성은 별도 장식이 아니라 HTML 구조와 interaction 상태에 함께 반영해야 합니다.
+## 14. form validation 흐름은?
+
+`input` event → 해당 field의 native validity 확인 → `STATE.form.errors` 갱신 → field class/aria/error text 갱신입니다. submit에서는 모든 field를 재검사하고 `STATE.form.valid`을 갱신한 뒤 성공/오류 result를 렌더합니다.
+
+## 15. `event.preventDefault()`는 왜 쓰는가?
+
+Anchor에서는 기본 즉시 이동 대신 smooth scroll을 제어하고, form에서는 기본 제출/페이지 이동을 막고 client-side validation 결과를 화면에 표시하기 위해 사용합니다.
+
+## 16. localStorage에 무엇을 저장하고 왜 저장하는가?
+
+Theme 문자열만 저장합니다. 사용자가 선택한 light/dark 상태를 새로고침 후에도 복원하기 위한 최소한의 persistent UI state입니다.
+
+## 17. IntersectionObserver를 왜 쓰는가?
+
+모든 scroll event마다 각 element 위치를 직접 계산하는 대신 브라우저가 viewport 진입을 관찰하도록 맡깁니다. Reference threshold는 공식 권장에 맞춰 `0.2`입니다.
+
+## 18. GitHub API의 로딩/에러/빈 상태를 왜 구분하는가?
+
+세 상태는 원인이 다릅니다. 로딩은 아직 결과가 없고, 오류는 요청 실패, 빈 상태는 요청 성공했지만 표시할 데이터가 없는 경우입니다. 하나의 메시지로 처리하면 사용자가 현재 상황과 다음 행동을 알기 어렵습니다.
+
+## 19. API 오류 시 재시도 UI는 어떻게 동작하는가?
+
+`STATE.projects.status === 'error'`이면 reload button text가 `다시 시도`로 바뀝니다. 클릭 시 동일 `loadProjects()`를 다시 실행해 loading부터 상태 흐름을 재시작합니다.
+
+## 20. 왜 API Token을 코드에 넣지 않는가?
+
+공식 B4-1은 공개 GitHub repository 조회이므로 Token이 필수 아닙니다. 브라우저 코드에 Secret을 넣으면 누구나 볼 수 있으므로 Reference는 인증정보 없이 public endpoint를 사용합니다.
+
+## 21. 배포 후 API만 실패한다면 무엇을 확인하는가?
+
+브라우저 Network/Console에서 요청 URL, username, HTTP status, GitHub rate limit을 확인합니다. HTML/CSS 배포 문제와 API 문제를 분리해서 봅니다.
+
+## 22. GitHub Pages에서 CSS/JS가 깨지면 무엇을 확인하는가?
+
+Pages source directory와 상대경로를 확인합니다. Project Pages는 repository 하위 경로에서 서비스될 수 있으므로 root 절대경로보다 현재 Reference의 `css/style.css`, `js/script.js`, `images/...` 같은 상대경로가 안전합니다.
+
+## 23. `innerHTML`과 DOM API 사용 시 보안상 차이는?
+
+외부 API 문자열을 그대로 `innerHTML`에 삽입하면 HTML injection 위험이 생길 수 있습니다. Reference project card는 외부 문자열을 `textContent`에 넣고 element를 `createElement()`로 만들어 위험을 줄입니다. `innerHTML=''`은 기존 card container를 비우는 고정 동작에만 사용합니다.
+
+## 24. 이 Reference에서 최소 3개의 상태→렌더 흐름은?
+
+1. Theme: click → `STATE.theme` → `renderTheme`
+2. GitHub API: fetch 결과 → `STATE.projects` → `renderProjects`
+3. Form: input/submit → `STATE.form` → field/result render
+
+추가로 menu click → `STATE.menuOpen` → `renderMenu`도 있습니다.
