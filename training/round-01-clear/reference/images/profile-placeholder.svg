@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" role="img" aria-labelledby="title desc">
+  <title id="title">프로필 이미지 자리 표시자</title>
+  <desc id="desc">원형 머리와 어깨 형태로 구성된 단순한 개발자 프로필 실루엣</desc>
+  <rect width="600" height="600" rx="48" fill="#e8edf5"/>
+  <circle cx="300" cy="220" r="105" fill="#8ca3c7"/>
+  <path d="M120 540c18-126 85-195 180-195s162 69 180 195" fill="#627da8"/>
+  <circle cx="470" cy="115" r="46" fill="#2457e6"/>
+  <path d="M449 115h42M470 94v42" stroke="#fff" stroke-width="12" stroke-linecap="round"/>
+</svg>
