@@ -1,63 +1,107 @@
 # B4-1 R01 — Evidence Guide
 
+## 원칙
+
+Reference 코드가 있다는 사실과 실제 브라우저/네트워크/배포가 동작한다는 사실을 분리합니다.
+
+B4-1 필수 범위에는 API Key/Token/Password가 필요하지 않습니다. 비밀정보를 JavaScript나 Evidence에 넣지 않습니다.
+
+## Runtime Evidence 최소 구조
+
+Phase C에서 실제 결과로 작성합니다.
+
+```text
+evidence/runtime/
+├── verify.txt
+├── browser.md
+├── api.md
+├── deploy.md
+└── evaluation.md
+```
+
 ## 1. Static Verify
 
 ```bash
-bash training/round-01-clear/environment/verify.sh
+mkdir -p training/round-01-clear/evidence/runtime
+bash training/round-01-clear/environment/verify.sh \
+  | tee training/round-01-clear/evidence/runtime/verify.txt
 ```
 
-실제 `Result: N PASS / 0 FAIL`을 저장합니다.
+마지막 줄 `Result: N PASS / 0 FAIL`을 실제 확인합니다.
 
-## 2. Responsive
+## 2. Browser Evidence — `browser.md`
 
-브라우저 DevTools에서 최소 다음 폭을 확인합니다.
+실제 브라우저에서 다음을 기록합니다.
 
-- Mobile: 375px 전후
-- Tablet: 768px 전후
-- Desktop: 1024px 이상
-
-확인:
-
-- nav/hamburger
-- Hero/About/Skills/Projects/Contact/Footer
-- card grid overflow 없음
-- text/image/form 가독성
-
-## 3. Interaction
-
+- mobile 약 375px
+- tablet 768px 이상
+- desktop 1024px 이상
 - hamburger open/close
-- anchor smooth scroll
-- 60px 이상 nav style 변화
-- 300px 이상 scroll-top button
+- smooth section navigation
+- 60px 이후 header style
+- 300px 이후 top button
+- top button click
 - dark/light toggle
-- reload 후 dark mode 유지
-- reveal animation
-- invalid/valid contact form
+- reload 후 theme 유지
+- IntersectionObserver reveal
+- Contact 빈 값
+- invalid email
+- 정상 form 결과
 
-## 4. GitHub API
+스크린샷을 사용할 경우 개인 정보가 포함되지 않도록 확인합니다.
 
-- loading
-- success project cards
-- empty 상태(테스트 계정/임시 코드가 아니라 안전한 조건에서 확인)
-- error 상태(DevTools offline/network 실패 등)
-- API URL에 Secret/Token 없음
+## 3. API Evidence — `api.md`
 
-## 5. GitHub Pages
+Network/화면에서 다음을 기록합니다.
 
-- 외부 접속 URL
-- 다른 네트워크/시크릿 브라우징에서도 접근
-- Projects API 정상 렌더링
-- console 치명적 오류 없음
+- 실제 GitHub username
+- request endpoint
+- loading state
+- HTTP success
+- project cards
+- fork filter 결과를 확인한 방법
+- error state + `다시 시도`
+- empty state를 재현한 방법
 
-## 6. Accessibility
+Error/empty를 억지로 가짜 성공으로 기록하지 않습니다. 필요하면 일시적으로 테스트 가능한 username/네트워크 조건을 사용한 뒤 원래 설정으로 되돌립니다.
 
-- keyboard tab 이동
-- skip link
-- visible focus
-- alt text
-- label 연결
-- menu/theme aria state
+## 4. Deploy Evidence — `deploy.md`
+
+- GitHub Pages 설정 방식
+- 실제 외부 URL
+- 외부 URL 접속 시간
+- CSS/JS/image relative path 정상
+- API 정상
+- mobile/desktop 정상
+- 주요 interaction 정상
+- README에 실제 deployment URL 반영 여부
+- README에 실제 screenshots 반영 여부
+
+Reference 단계에서는 URL을 추측해서 적지 않습니다.
+
+## 5. Evaluation — `evaluation.md`
+
+다음 질문을 실제 코드를 가리키며 자기 말로 정리합니다.
+
+- HTML/CSS/JS 분리
+- semantic tags
+- CSS variables
+- addEventListener vs onclick
+- Event → STATE → Render
+- async/await + try/catch
+- filter/map/forEach
+- Flexbox vs Grid
+- explicit STATE 이유
+- Mobile First 이유
+
+## 6. 최종 Gate
+
+모든 파일을 실제 내용으로 채운 후:
+
+```bash
+bash training/round-01-clear/environment/verify.sh --runtime
+```
 
 ## CLEAR
 
-정적 구조만으로 CLEAR하지 않습니다. 실제 browser/API/Pages URL과 설명형 평가까지 확인합니다.
+정적 verify, 실제 브라우저, 실제 GitHub API, 실제 GitHub Pages, 설명형 평가 Evidence가 모두 충족되어야 `✅ CLEAR`입니다.
