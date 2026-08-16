@@ -2,31 +2,56 @@
 
 ## Golden Path
 
-- 현대 브라우저(Chrome/Edge/Firefox 등)
-- VS Code + Live Server 권장
-- 외부 UI/JS 라이브러리 없음
-- GitHub public REST API 사용
-- GitHub Pages 배포는 Phase C에서 실제 확인
+- Modern browser
+- Python 3 for simple local HTTP server
+- optional Node.js for `node --check`
+- Vanilla HTML/CSS/JavaScript only
+- GitHub public API
+- GitHub Pages는 Phase C에서 실제 설정
 
-## 로컬 실행
-
-가장 단순한 방법은 VS Code Live Server입니다. Python이 있다면 Reference 확인용으로 다음도 사용할 수 있습니다.
+## Local Server
 
 ```bash
 cd training/round-01-clear/reference
-python3 -m http.server 5500
+python3 -m http.server 8000
 ```
 
-브라우저에서 `http://localhost:5500`으로 접속합니다.
+## Reference Verify
 
-## Reference 검증
+Repository root에서:
 
 ```bash
 bash training/round-01-clear/environment/verify.sh
 ```
 
-정적 검증은 HTML/CSS/JS 필수 구조와 금지 패턴을 확인하지만, 실제 responsive layout, GitHub API 네트워크 응답, localStorage 유지, GitHub Pages 외부 접속을 대신하지 않습니다.
+검사 범위:
 
-## Secret
+- HTML/CSS/JS/images/reference docs
+- semantic tags/sections/anchors/form labels
+- CSS variables/Flex/Grid/mobile breakpoints
+- JS DOM/events/localStorage/fetch/async/array methods
+- explicit STATE theme/projects/form flows
+- 60px/300px/0.2 thresholds
+- forbidden framework/library references
+- JavaScript syntax when Node is available
+- Secret-pattern tracked filenames
 
-GitHub 공개 repository 조회에는 API Key를 저장하지 않습니다. 개인 Access Token을 프론트엔드 JavaScript에 넣으면 브라우저 사용자에게 노출되므로 금지합니다.
+## Runtime Verify
+
+Phase C 실제 Evidence 이후:
+
+```bash
+bash training/round-01-clear/environment/verify.sh --runtime
+```
+
+필요 Evidence:
+
+```text
+evidence/runtime/verify.txt
+evidence/runtime/browser.md
+evidence/runtime/api.md
+evidence/runtime/deploy.md
+evidence/runtime/evaluation.md
+```
+
+정적 verify는 실제 browser/network/deployment를 대신하지 않습니다.
